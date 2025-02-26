@@ -1,5 +1,7 @@
 package com.levanminh.whatsappclone.security;
 
+import org.springframework.web.filter.CorsFilter;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,6 +9,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import static org.springframework.security.config.Customizer.withDefaults;
+
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import org.springframework.http.HttpHeaders;
+import java.util.Arrays;
+import java.util.Collections;
 
 
 @Configuration
@@ -45,5 +54,28 @@ public class WebSecurityConfig {
                 // Spring security được tích hợp Oauth2, Oauth2 chịu trách nhiệm xác thực (authentication) token, nếu xác thực token thành công thì spring security sẽ thực hiện phân quyền (authorization)
         return http.build();
     }
-    
+
+    @Bean
+    public CorsFilter corsFilter() {
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        final CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+        config.setAllowedMethods(Arrays.asList(
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE",
+                "OPTIONS",
+                "PATCH")
+        );
+        config.setAllowedHeaders(Arrays.asList(
+                HttpHeaders.ORIGIN,
+                HttpHeaders.CONTENT_TYPE,
+                HttpHeaders.ACCEPT,
+                HttpHeaders.AUTHORIZATION
+        ));
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
 }
