@@ -24,8 +24,8 @@ import java.util.List;
 @Entity
 @Table(name = "chat")
 
-@NamedQuery(name = ChatConstants.FIND_ALL_CHATS_BY_USER,
-        query = "SELECT DISTINCT c FROM Chat c WHERE c.sender.id = :userId OR c.recipient.id = :userId ORDER BY createdDate DESC"
+@NamedQuery(name = ChatConstants.FIND_ALL_CHATS_BY_USERID,
+        query = "SELECT DISTINCT c FROM Chat c WHERE c.sender.id = :userId OR c.recipient.id = :userId ORDER BY createdDate DESC"  // jpa không hỗ trợ DISTINCT, ORDER BY, cũng như truy vấn phức tạp and or and như lệnh FIND_CHAT_BETWEEN_TWO_USERS bên dưới, vì vậy cần tự custom JPQL
 )
 
 @NamedQuery(name = ChatConstants.FIND_CHAT_BETWEEN_TWO_USERS,
@@ -87,7 +87,7 @@ public class Chat extends BaseAuditingEntity {
     }
 
     @Transient  // hiển thị tên chính người gửi.
-    public String getTargetChatName(String userId){ // getConversationPartnerName, Được sử dụng khi cần hiển thị đối phương trong cuộc trò chuyện.
+    public String getCurrentUserChatName (String userId){ // getConversationPartnerName, Được sử dụng khi cần hiển thị đối phương trong cuộc trò chuyện.
         if(sender.getId().equals(userId)) {
             return sender.getFirstName() + " " + sender.getLastName();
         }

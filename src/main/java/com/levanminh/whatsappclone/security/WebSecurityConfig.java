@@ -29,7 +29,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests( request -> {
                     request
                             .requestMatchers( // auth
-                                    "/auth/**",
+                                    "/auth/**", // phục vụ cho xác thực (login, đăng ký, ...).
                                     "/v2/api-docs",
                                     "/v3/api-docs",
                                     "/v3/api-docs/**",
@@ -40,7 +40,7 @@ public class WebSecurityConfig {
                                     "/swagger-ui/**",
                                     "/webjars/**",
                                     "/swagger-ui.html",
-                                    "/ws/**"
+                                    "/ws/**"  // WebSocket
                             )
                             .permitAll()
                             .anyRequest()
