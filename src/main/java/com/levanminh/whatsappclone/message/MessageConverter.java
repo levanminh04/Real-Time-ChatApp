@@ -1,5 +1,7 @@
 package com.levanminh.whatsappclone.message;
 
+import com.levanminh.whatsappclone.file.FileUtils;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,7 +15,7 @@ public class MessageConverter {
                 .content(messages.getContent())
                 .createdAt(LocalDateTime.now())
                 .receiverId(messages.getReceiverId())
-                //.media()
+                .media(FileUtils.readFileFromLocation(messages.getMediaFilePath()))
                 .build();
     }
 }

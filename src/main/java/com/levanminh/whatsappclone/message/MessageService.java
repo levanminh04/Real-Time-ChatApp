@@ -61,6 +61,16 @@ public class MessageService {
         String currentUserId = getCurrentUserId(chat, authentication);
 
         final String filePath = fileService.saveFile(file, currentUserId);
+
+        Message message = new Message();
+        message.setChat(chat);
+        message.setSenderId(currentUserId); // người dùng đang đăng nhập là sender
+        message.setReceiverId(partnerId);
+        message.setType(MessageType.IMAGE);
+        message.setMediaFilePath(filePath);
+        message.setState(MessageState.SENT);
+        messageRepository.save(message);
+
     }
 
     public String getChatPartnerId(Chat chat, Authentication authentication){ // lấy id của đối phương
