@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.parameters.P;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -18,4 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(name = UserConstants.FIND_USER_BY_PUBLIC_ID)
     Optional<User> findByPublicId(@Param("publicId") String senderId);
+
+    @Query(name = UserConstants.FIND_ALL_USERS_EXCEPT_SEFT)
+    List<User> findAllUsersExceptSelf(@Param("publicId") String publicId);
 }

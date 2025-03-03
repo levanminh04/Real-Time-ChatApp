@@ -31,4 +31,14 @@ public class UserConverter {
         return user;
     }
 
+    public UserResponse toUserResponse(User user) {
+        return UserResponse.builder()
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .id(user.getId())
+                .lastSeen(user.getLastSeen())
+                .isOnline(user.isUserOnline())
+                .build();
+    }
 }
