@@ -1,10 +1,10 @@
-package com.levanminh.realtimechatapp;
+package com.levanminh.RealTimeChatApp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class WhatsAppCloneApplicationTests {
+class RealTimeChatAppApplicationTests {
 
 	@Test
 	void contextLoads() {

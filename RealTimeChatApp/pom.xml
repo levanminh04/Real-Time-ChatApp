@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -76,8 +76,8 @@
 		</dependency>
 
 
-<!--	Tự động tạo tài liệu API theo chuẩn OpenAPI dựa trên controller, endpoints, annotations.-->
-<!--	Cung cấp giao diện Swagger UI cho phép người dùng xem và thử nghiệm các API thông qua trình duyệt web-->
+		<!--	Tự động tạo tài liệu API theo chuẩn OpenAPI dựa trên controller, endpoints, annotations.-->
+		<!--	Cung cấp giao diện Swagger UI cho phép người dùng xem và thử nghiệm các API thông qua trình duyệt web-->
 
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -86,7 +86,7 @@
 		</dependency>
 
 
-<!--	hỗ trợ Spring WebSocket và Spring Messaging, giúp bạn bảo vệ các kênh giao tiếp như STOMP WebSockets.-->
+		<!--	hỗ trợ Spring WebSocket và Spring Messaging, giúp bạn bảo vệ các kênh giao tiếp như STOMP WebSockets.-->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-messaging</artifactId>

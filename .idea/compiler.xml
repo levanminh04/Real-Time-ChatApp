@@ -10,15 +10,16 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
-        <module name="realtimechatapp" />
+        <module name="RealTimeChatApp (2)" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="untitled" target="22" />
+      <module name="realtimechatapp" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="RealTimeChatApp (2)" options="-parameters" />
       <module name="realtimechatapp" options="-parameters" />
     </option>
   </component>
