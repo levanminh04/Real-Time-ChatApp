@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/RealTimeChatAppp.iml" filepath="$PROJECT_DIR$/.idea/RealTimeChatAppp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/RealTimeChatApp.iml" filepath="$PROJECT_DIR$/.idea/RealTimeChatApp.iml" />
     </modules>
   </component>
 </project>
