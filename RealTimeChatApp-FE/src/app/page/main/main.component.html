@@ -1,0 +1,62 @@
+
+
+<div class = "main">
+  <div class = "background-blue"></div>
+
+  <div class="main-container">
+
+    <div class="bisque-background">
+      <div>
+        <i class="fa-brands fa-rocketchat responsive-icon cursor-pointer"></i>
+      </div>
+
+      <div class = "d-flex flex-column justify-content-between">
+        <i class="fa-solid fa-user responsive-icon cursor-pointer" style="margin: 0 0 26px 0" (click) = userProfile()></i>
+        <i class="fa-solid fa-right-from-bracket responsive-icon cursor-pointer" (click) = "logout()"></i>
+      </div>
+    </div>
+<!--      có thể thay style="flex-grow: 1;" bằng w-100-->
+    <div class="d-flex" style="flex-grow: 1;"> <!-- flex-grow: 1;chiếm toàn bộ không gian còn lại của main-container -->
+      <div class = "col-3 overflow-auto" > <!-- overflow-auto  .col-3 bị ảnh hưởng bởi div.d-flex, do đó, nó chiếm 25% chiều rộng của div.d-flex, chứ không phải của .main-container trực tiếp.-->
+        <app-chat-list
+          [chats]="chats"
+        (chatSelected)="chatSelected($event)"
+        >
+          <!--  Cú pháp [] được sử dụng để bind một giá trị từ component cha vào một property của component con  -->
+          <!--  Cú pháp () được sử dụng để lắng nghe các sự kiện được phát ra từ component con  -->
+          <!--  (chatSelected) là của component con <app-chat-list>, chatSelected($event) là hàm chatSelected() trong component cha main.component  -->
+          <!--  Khi (chatSelected) của component con phát ra sự kiên, dự liệu từ component con sẽ được truyền đến cha và gán cho $event,
+                component cha sẽ sử dụng dữ liệu trong $event để hàm chatSelected() của component cha xử lý theo mục đích cụ thể   -->
+        </app-chat-list>
+
+      </div>
+      @if(selectedChat.id){    <!--  kiểm tra xem selectedChat.id có tồn tại (có giá trị) hay không    -->
+        <div class = "col-9">
+          <div class = "d-flex justify-content-between flex-column h-100"> <!-- h-100 = height: 100% -->
+            <div class = "bg-grey p-2">
+              <div class = "d-flex gap-2">
+                <div class = "user-img">
+                  <img src="MU_logo.jpg" alt = "user-image">
+                </div>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+

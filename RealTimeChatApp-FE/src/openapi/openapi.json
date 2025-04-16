@@ -1,0 +1,406 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/api/v1/messages": {
+      "post": {
+        "tags": [
+          "Message"
+        ],
+        "operationId": "saveMessage",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "keycloak": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Message"
+        ],
+        "operationId": "setMessageToSeen",
+        "parameters": [
+          {
+            "name": "chat-id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          }
+        },
+        "security": [
+          {
+            "keycloak": []
+          }
+        ]
+      }
+    },
+    "/api/v1/messages/media": {
+      "post": {
+        "tags": [
+          "Message"
+        ],
+        "operationId": "uploadMediaMessage",
+        "parameters": [
+          {
+            "name": "chat-id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "File media cần upload",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "security": [
+          {
+            "keycloak": []
+          }
+        ]
+      }
+    },
+    "/api/v1/chats": {
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "operationId": "getAllChats",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChatResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "keycloak": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "operationId": "createChat",
+        "parameters": [
+          {
+            "name": "sender-id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "receiver-id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "keycloak": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "getAllUsersExceptSelf",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "keycloak": []
+          }
+        ]
+      }
+    },
+    "/api/v1/messages/chat/{chatId}": {
+      "get": {
+        "tags": [
+          "Message"
+        ],
+        "operationId": "getAllMessages",
+        "parameters": [
+          {
+            "name": "chatId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessageResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "keycloak": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MessageRequest": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "senderId": {
+            "type": "string"
+          },
+          "receiverId": {
+            "type": "string"
+          },
+          "messageType": {
+            "type": "string",
+            "enum": [
+              "TEXT",
+              "AUDIO",
+              "VIDEO",
+              "IMAGE"
+            ]
+          },
+          "chatId": {
+            "type": "string"
+          }
+        }
+      },
+      "StringResponse": {
+        "type": "object",
+        "properties": {
+          "response": {
+            "type": "string"
+          }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "lastSeen": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "online": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MessageResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "content": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "TEXT",
+              "AUDIO",
+              "VIDEO",
+              "IMAGE"
+            ]
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "SENT",
+              "SEEN"
+            ]
+          },
+          "senderId": {
+            "type": "string"
+          },
+          "receiverId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "media": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "byte"
+            }
+          }
+        }
+      },
+      "ChatResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "chatName": {
+            "type": "string"
+          },
+          "unreadCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastMessage": {
+            "type": "string"
+          },
+          "lastMessageTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "senderId": {
+            "type": "string"
+          },
+          "recipientId": {
+            "type": "string"
+          },
+          "recipientOnline": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "keycloak": {
+        "type": "oauth2",
+        "in": "header",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "flows": {
+          "password": {
+            "authorizationUrl": "http://localhost:9090/realms/Real-time-chat-app/protocol/openid-connect/auth",
+            "tokenUrl": "http://localhost:9090/realms/Real-time-chat-app/protocol/openid-connect/token",
+            "scopes": {
+
+            }
+          }
+        }
+      }
+    }
+  }
+}

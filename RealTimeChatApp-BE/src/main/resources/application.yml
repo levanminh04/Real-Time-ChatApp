@@ -1,4 +1,8 @@
+server:
+  port: 8080
+
 spring:
+
   datasource:
     url: jdbc:postgresql://localhost:5432/Real_time_chat_app
     username: username
@@ -6,19 +10,19 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: false
-    properties:
-      hibernate:
-        format_sql: false
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+
   flyway:
     enabled: false
+
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:9090/realms/Real-time-chat-app
+
   servlet:
     multipart:
       max-file-size: 50MB

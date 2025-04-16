@@ -1,1 +1,47 @@
 /* You can add global styles to this file, and also import other style files */
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+
+*{  // * là bộ chọn toàn cục (universal selector), áp dụng CSS này cho mọi phần tử trên trang.
+  margin: 0px;
+  padding: 0px;   // Xóa khoảng cách mặc định (margin, padding) của tất cả các phần tử.  Tránh trường hợp một số trình duyệt có margin/padding mặc định khác nhau, gây lỗi giao diện.
+  box-sizing: border-box;  //  Khi đặt width và height, chúng sẽ bao gồm cả padding và border, không làm phần tử to hơn mong đợi.
+}
+
+body{  // body là thẻ gốc chứa toàn bộ nội dung của trang web.
+  background-color: #FFEBCD;   // Thiết lập màu nền của toàn bộ trang web.
+}
+
+.bisque-background{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem; // Tương đương với p-3 của Bootstrap
+  background-color: bisque;
+  width: 4%;
+}
+
+
+.cursor-pointer{
+  cursor: pointer;
+}
+
+
+.bg-grey{
+  background-color: #e3e3e3;
+}
+
+
+
+.user-img{
+   width: 40px;
+   height: 40px;
+   border-radius: 50%;
+   overflow: hidden;  // Cắt và ẩn nội dung thừa, không có thanh cuộn.
+   >img{
+     width: 100%;
+   }
+
+ }

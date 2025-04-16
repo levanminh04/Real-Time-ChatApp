@@ -1,0 +1,42 @@
+
+
+.chat-list{
+  > div{    // '>' là combiator selector dùng để chọn phần tử con trực tiếp của phần tử cha Chỉ ÁP DỤNG CHO các phần tử <div> là CON TRỰC TIẾP của .chat-list. Nếu <div> nằm sâu hơn 1 cấp (tức là cháu chắt, không phải con trực tiếp), thì sẽ không được áp dụng CSS này.
+    cursor: pointer;
+
+    // &:hover ở đây tương đương với .chat-list > div:hover
+    &:hover{ // :hover là một pseudo-class dùng để thay đổi kiểu dáng của phần tử khi người dùng di chuột vào nó.
+      background-color: #FFEBCD;   // di chuột vào <div>, nó sẽ đổi màu nền thành #f2f1f1 .
+    }
+  }
+
+
+}
+
+.msg-date{
+  font-size: 0.7rem;
+
+  &.unread{
+    color: dodgerblue;   // màu chữ
+    font-weight: 500;
+  }
+}
+
+
+.unread-msg-badge{
+  background: dodgerblue;
+  color: #cccccc;
+  min-width: 20px; // co giãn theo nội dung nhưng min là 20px
+  height: 20px;
+  border-radius: 50%; /* 50% giúp tạo hình tròn */
+  font-size: 0.8rem;
+  font-weight: 400;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.border-bottom-gray{
+  border-bottom: solid 3px #cccccc;
+}

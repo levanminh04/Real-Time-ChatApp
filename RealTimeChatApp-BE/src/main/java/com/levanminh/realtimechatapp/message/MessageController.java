@@ -23,7 +23,7 @@ public class MessageController {
 
     // SAU CÓ THỜI GIAN THÌ SỬA LẠI CHO CHUẨN BEST PRATICE
 
-    @PostMapping // Tạo mới một tài nguyên
+    @PostMapping // Tạo mới dữ liệu
     @ResponseStatus(HttpStatus.CREATED)  // trả về 201 CREATED nếu save success
     public void saveMessage(@RequestBody MessageRequest messageRequest) {
         messageService.saveMessage(messageRequest);

@@ -14,7 +14,7 @@ public class MessageConverter {
                 .id(messages.getId())
                 .senderId(messages.getSenderId())
                 .content(messages.getContent())
-                .createdAt(LocalDateTime.now())
+                .createdAt(messages.getCreatedDate())
                 .receiverId(messages.getReceiverId())
                 .media(FileUtils.readFileFromLocation(messages.getMediaFilePath()))
                 .build();

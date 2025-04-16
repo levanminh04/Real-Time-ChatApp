@@ -29,6 +29,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests( request -> {
                     request
                             .requestMatchers( // auth
+                                    "/",
                                     "/auth/**", // phục vụ cho xác thực (login, đăng ký, ...).
                                     "/v2/api-docs",
                                     "/v3/api-docs",

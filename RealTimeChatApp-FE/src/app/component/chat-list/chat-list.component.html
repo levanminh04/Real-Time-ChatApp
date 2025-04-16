@@ -1,0 +1,103 @@
+
+
+<!--thuộc tính sticky-top được sử dụng để làm cho một phần tử giữ nguyên vị trí ở đầu trang khi cuộn xuống (tương tự position: sticky trong CSS).-->
+
+<div class = "sticky-top bg-grey " >
+  <div class = "d-flex justify-content-between align-items-center  p-2">
+    <h4> Chat </h4>
+    @if (!searchNewContact){
+      <i class="fas fa-comment-medical cursor-pointer fa-lg" (click) = "searchContact()"></i>
+    } @else {
+      <i class="fas fa-times-circle cursor-pointer fa-lg" (click) = "searchNewContact = false"></i>
+    }
+  </div>
+
+  <div class = "d-flex p-2">
+    <div class = "input-group">
+      <span class = "input-group-text">
+        <i class = "fas fa-search cursor-pointer"></i>
+      </span>
+      <input type="text" class = "form-control flex-grow-1" placeholder="Search">
+    </div>
+
+  </div>
+
+  <div class="d-flex gap-3 p-2">
+    <button class="badge rounded-pill text-bg-light border-0 cursor-pointer">All</button>
+    <button class="badge rounded-pill text-bg-light border-0 cursor-pointer">Unread</button>
+    <button class="badge rounded-pill text-bg-light border-0 cursor-pointer">Favorites</button>
+  </div>
+
+</div>
+
+<div class = "chat-list">
+  @if (chats().length && !searchNewContact){
+    @for (chat of chats(); track chat.id) {
+      <div class = "d-flex justify-content-between align-items-center border-bottom-gray p-2"
+      (click) = "chatClicked(chat)">
+
+        <div class="d-flex gap-2">
+          <div class = "user-img">
+            <img src="MU_logo.jpg" alt="user image">
+          </div>
+
+          <div class = "d-flex flex-column">
+            <span>{{chat.chatName}}</span>
+            <small class = "text-black">
+              @if (chat.lastMessage === "Attachment") {
+                  <i class="fa-solid fa-image">{{chat.chatName}} sent an attachment</i>
+              }
+              {{ wrapMessage(chat.lastMessage)}}
+            </small>
+          </div>
+        </div>
+        <div class = "d-flex flex-column align-items-end">
+          <span class = "msg-date" [class.unread] = "chat.unreadCount && chat.unreadCount > 0">
+            {{ formatMessageTime(chat.lastMessageTime) }}
+          </span>
+          @if (chat.unreadCount && chat.unreadCount > 0) {
+            <small class = "unread-msg-badge">
+              {{ getUnreadCountDisplay(chat.unreadCount )}}
+            </small>
+          }
+        </div>
+
+      </div>
+    }
+  } @else if(searchNewContact){
+    @for (contact of contacts; track contact){
+      <div class = "d-flex align-content-center justify-content-between border-bottom-gray p-2"
+      (click) = "selectContact(contact)">
+        <div class="d-flex gap-2">
+          <div class = "user-img">
+            <img src="MU_logo.jpg" alt = "user-image">
+          </div>
+
+          <div class="d-flex flex-column">
+            <span> {{ contact.firstName + ' ' + contact.lastName }} </span>
+            @if(contact.online){
+              <small class = "text-black">Online</small>
+            } @else {
+              <small class = "text-black">Last seen {{contact.lastSeen | date: '.mm.yy HH:mm'}}</small>
+            }
+          </div>
+
+        </div>
+      </div>
+
+    }
+  } @else {
+    <span class = "p-3">Not chat yet...</span>
+  }
+
+
+</div>
+
+
+
+
+
+
+
+
+
