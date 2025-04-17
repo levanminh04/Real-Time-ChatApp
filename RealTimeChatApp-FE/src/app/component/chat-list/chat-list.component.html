@@ -45,7 +45,7 @@
             <span>{{chat.chatName}}</span>
             <small class = "text-black">
               @if (chat.lastMessage === "Attachment") {
-                  <i class="fa-solid fa-image">{{chat.chatName}} sent an attachment</i>
+                  <i class="fa-solid fa-image"></i>
               }
               {{ wrapMessage(chat.lastMessage)}}
             </small>
@@ -78,7 +78,7 @@
             @if(contact.online){
               <small class = "text-black">Online</small>
             } @else {
-              <small class = "text-black">Last seen {{contact.lastSeen | date: '.mm.yy HH:mm'}}</small>
+              <small class = "text-black">Last seen {{formatMessageTime(contact.lastSeen)}}</small>
             }
           </div>
 

@@ -32,11 +32,13 @@ export class ChatListComponent {
   }
 
   searchContact() {
+    console.log("getAllUsersExceptSelf đang chạy...")
     this.userService.getAllUsersExceptSelf()
       .subscribe({
         next: (users) => {
           this.contacts = users; // Cập nhật danh sách liên hệ
           this.searchNewContact = true; // Đặt cờ để chỉ ra rằng đã tìm kiếm liên hệ mới
+          console.log(users)
         },
         error: (error) => {
           console.error('Lỗi khi lấy danh sách người dùng:', error);

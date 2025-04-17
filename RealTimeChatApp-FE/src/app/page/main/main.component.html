@@ -1,5 +1,3 @@
-
-
 <div class = "main">
   <div class = "background-blue"></div>
 
@@ -38,11 +36,40 @@
                 <div class = "user-img">
                   <img src="MU_logo.jpg" alt = "user-image">
                 </div>
+                <div class = "d-flex flex-column">
+                  <span> {{selectedChat.chatName}}</span>
+                  <div class = "d-flex gap-1 align-items-center">
+                    @if(selectedChat.recipientOnline){
+                      <small class = "online-status"></small>
 
+                      <small>
+                        Online
+                      </small>
+                    } @else {
+                      <small class = "offline-status"></small>
 
-
+                      <small>
+                        Offline
+                      </small>
+                    }
+                  </div>
+                </div>
               </div>
             </div>
+
+
+
+            <div #scrollableDiv class="h-100 bg-chat p-3 overflow-x-scroll">
+
+              @for (message of chatMessages; track message) {
+                @if(isSelfMessage(message)){
+                    
+                } @else {
+                  
+                }
+              }
+            </div>
+
           </div>
         </div>
       }

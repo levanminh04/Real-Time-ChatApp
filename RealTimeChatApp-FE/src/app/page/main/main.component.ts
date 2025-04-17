@@ -19,7 +19,7 @@ export class MainComponent implements OnInit{
 
   chats: Array<ChatResponse> = [];
   selectedChat: ChatResponse = {}; // khai báo selectedChat là 1 ChatResponse - object rỗng, vì các thuộc tính của ChatResponse là tùy chọn ? nên khai báo này hợp lệ kể từ typescipt 4.0+
-  private chatMessages: Array<MessageResponse> = []; // MessageResponse[] = [];
+  chatMessages: Array<MessageResponse> = []; // MessageResponse[] = [];
 
 
 
@@ -34,10 +34,15 @@ export class MainComponent implements OnInit{
   }
 
   private getAllChats(){
+    console.log('getAllChats đang được gọi');
     this.chatService.getAllChats()
       .subscribe({
         next: (res) => {
+          console.log('Kết quả API:', res);
           this.chats = res;
+        },
+        error: (err) => {
+          console.error('Lỗi khi gọi API getAllChats:', err);
         }
       });
   }
@@ -52,6 +57,9 @@ export class MainComponent implements OnInit{
   private setMessagesToSeen() {
 
   }
+
+
+
 
   private getAllChatMessages(chatId: string) {
     this.messageService.getAllMessages(chatId).subscribe({
