@@ -7,7 +7,7 @@ import { MessageResponse } from '../models/message-response';
 
 @Injectable({ providedIn: 'root' })
 export class MessageService {
-  private readonly baseUrl = '/api/v1/messages';
+  private readonly baseUrl = 'http://localhost:8080/api/v1/messages';
 
   constructor(private http: HttpClient) {}
 
@@ -24,7 +24,6 @@ export class MessageService {
       params: { 'chat-id': chatId },  // truyền qua param, backend yêu cầu @RequestParam('chat-id')
     });
   }
-
   // Tải lên media cho tin nhắn
   uploadMediaMessage(chatId: string, file: Blob): Observable<void> {
     const formData = new FormData();
@@ -38,7 +37,7 @@ export class MessageService {
   // Lấy tất cả tin nhắn trong một chat
   getAllMessages(chatId: string): Observable<MessageResponse[]> {
     return this.http.get<MessageResponse[]>(`${this.baseUrl}/chat/${chatId}`, {
-      headers: { Accept: '*/*' }, // Báo với server rằng client chấp nhận bất kỳ định dạng nào trong phản hồi.
+      headers: { Accept: 'application/json' },
     });
   }
 

@@ -49,14 +49,33 @@
   justify-content: center;
   align-items: center;
 }
-
-.bg-chat {
-  background-color: #efeae2;
-  background-image: url("/bg_img4.jpg");
+.bg-chat2 {
+  //background-color: #efeae2;
+  background-image: url("/bg_img9.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
   position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.4); /* White overlay with 70% opacity */
+    /* Or use: background-color: rgba(0, 0, 0, 0.3); for a darker overlay */
+    pointer-events: none; /* Allows clicks to pass through to elements below */
+  }
+}
+.bg-chat {
+  background-color: #efeae2;
+  background-image: url("/bg_img6.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+
 
   &::before {
     content: "";
@@ -65,14 +84,79 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.5); /* White overlay with 70% opacity */
+    background-color: rgba(255, 255, 255, -1); /* White overlay with 70% opacity */
     /* Or use: background-color: rgba(0, 0, 0, 0.3); for a darker overlay */
     pointer-events: none; /* Allows clicks to pass through to elements below */
   }
   /* Make sure message content appears above the overlay */
-  //& > * {
-  //  position: relative;
-  //  z-index: 1;
-  //}
+  & > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+
+.message-box{
+  position: relative;
+  display: flex;
+  width: 100%;
+  margin: 10px 0px;
+
+  &.self{   // &.self tương đương với .message-box.self
+    >div{
+      position: relative;
+      right: 0;
+      text-align: right;
+      background: #d9fdd3;
+      padding: 10px 10px 0 10px;
+      max-width: 65%;
+      border-radius: 5px;
+      font-size: 0.9em;
+    }
+    justify-content: end;
+
+    &::before{   // tạo 1 phần từ ảo trước self mesagge, tức là Không tồn tại trong DOM, chỉ được trình duyệt tạo ra, ko phải nội dung mà người dùng tạo ra
+      content:'';
+      position: absolute;
+      top:0;
+      right: -10px;
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(135deg, #d9fdd3 0%, #d9fdd3 50%, transparent 50%, transparent);
+    }
+  }
+
+  &.partner{
+    justify-content: flex-start;
+
+    > div {
+      position: relative;
+      right: 0;
+      text-align: left;
+      background: #fff;
+      max-width: 65%;
+      padding: 10px 10px 0 10px;
+      border-radius: 5px;
+      font-size: 0.9em;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -10px;
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(225deg, #fff 0%, #fff 50%, transparent 50%, transparent);
+    }
+  }
+
+}
+
+.emojis-panel{
+  position: absolute;  // đặt vị trí theo main-container
+  bottom: 60px;
+  left: 385px;
+  z-index: 10;
 }
 
