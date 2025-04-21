@@ -82,7 +82,25 @@ export class ChatListComponent {
   }
 
   selectContact(contact: UserResponse) {
+    this.chatService.createChat(this.keycloakService.userIḍ as string
+                                , contact.id as string)
+      .subscribe({
+        next:(res)=>{
+          const chat: ChatResponse = {
+            id : res.response,
+            chatName:contact.firstName + " " + contact.lastName,
+            recipientOnline: contact.online,
+            lastMessageTime: contact.lastSeen,
+            senderId: this.keycloakService.userIḍ,
+            recipientId: contact.id
+          };
+          this.chats().unshift(chat); // chats() Đây là một InputSignal, thường được sử dụng để theo dõi và phản ứng với các thay đổi của dữ liệu. Khi gọi this.chats(), bạn đang lấy giá trị hiện tại của tín hiệu chats.
+          // .unshift(chat): Đây là một phương thức của mảng trong JavaScript. Phương thức này thêm một phần tử mới (chat) vào ĐẦU mảng và thay đổi mảng gốc.
+          this.searchNewContact = false;
+          this.chatSelected.emit(chat); // hiển thi đoạn chat mới tạo
 
+        }
+      })
   }
 
 }

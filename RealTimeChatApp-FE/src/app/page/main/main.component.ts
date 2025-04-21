@@ -9,9 +9,8 @@ import {DatePipe} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {PickerComponent} from '@ctrl/ngx-emoji-mart';
 import {EmojiData} from '@ctrl/ngx-emoji-mart/ngx-emoji';
-import {setMessageToSeen} from '../../service/fn/message/set-message-to-seen';
-import normalizeExternalHTML from 'quill/modules/normalizeExternalHTML';
 import {MessageRequest} from '../../service/models/message-request';
+import SockJS from 'sockjs-client';
 
 @Component({
   selector: 'app-main',
@@ -42,6 +41,7 @@ export class MainComponent implements OnInit{
 
   ngOnInit(): void {
     this.getAllChats();
+    this.initWebsocket();
   }
 
   private getAllChats(){
@@ -57,12 +57,34 @@ export class MainComponent implements OnInit{
         }
       });
   }
-
+  // chatSelected(chatResponse: ChatResponse) {
+  //   this.selectedChat = chatResponse;
+  //   this.getAllChatMessages(chatResponse.id as string);
+  //   this.setMessagesToSeen();
+  //   this.selectedChat.unreadCount = 0;
+  // }
   chatSelected(chatResponse: ChatResponse) {
     this.selectedChat = chatResponse;
-    this.getAllChatMessages(chatResponse.id as string);
-    this.setMessagesToSeen();
-    this.selectedChat.unreadCount = 0;
+    console.log('Selected chat:', this.selectedChat);
+    this.selectedChat.unreadCount = 0; // Reset unread count immediately visually
+
+    this.messageService.getAllMessages(chatResponse.id as string).subscribe({    // getAllMessages là hàm bất đồng bộ nên cần nhét hết logic setToSeen vào getAllMessages, nếu không là getAllMessages chưa lấy dòng list message mà đã setToSeen là error
+      next: (messages) => {
+        this.chatMessages = messages;
+        // --- Logic moved inside the 'next' callback ---
+        const latestMessage = this.chatMessages && this.chatMessages.length > 0 ? this.chatMessages[this.chatMessages.length - 1] : null;
+        const currentUserId = this.keycloakService.userIḍ as string;
+
+        if (latestMessage && latestMessage.senderId !== currentUserId && latestMessage.state !== 'SEEN') {
+          console.log('Calling setMessagesToSeen...');
+          this.setMessagesToSeen(); // Call setMessagesToSeen only after messages are loaded and condition is met
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching chat messages:', err);
+        this.chatMessages = [];
+      }
+    });
   }
 
   private setMessagesToSeen() {
@@ -92,6 +114,7 @@ export class MainComponent implements OnInit{
     this.messageService.getAllMessages(chatId).subscribe({
       next: (messages) => {
         this.chatMessages = messages;
+        console.log('ok', this.chatMessages);
       }
     });
   }
@@ -142,7 +165,7 @@ export class MainComponent implements OnInit{
               state: 'SENT',
               content: this.messageContent,
               type: 'TEXT',
-              createdAt: new Date().toString() // cách này hiển thị tạm thời thôi, vì có thể lệch so với createAt trong database 1 vài giây, khoông nên gọi lại getALlChatMessages vì gây giảm hiệu suất, createAt sẽ được cập nhật lại trong lần gọi sau
+              createdAt: new Date().toString() // cách này hiển thị tạm thởi thôi, vì có thể lệch so với createAt trong database 1 vài giây, khoông nên gọi lại getALlChatMessages vì gây giảm hiệu suất, createAt sẽ được cập nhật lại trong lần gọi sau
             }
             this.selectedChat.lastMessage = this.messageContent
             this.messageContent = ''
@@ -159,4 +182,9 @@ export class MainComponent implements OnInit{
   }
 
 
+  private initWebsocket() {
+    if (this.keycloakService.keycloak.tokenParsed?.sub) {
+      let ws = new SockJS('');
+    }
+  }
 }

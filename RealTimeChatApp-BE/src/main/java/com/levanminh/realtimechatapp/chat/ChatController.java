@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -32,6 +34,11 @@ public class ChatController {
 
     @GetMapping
     public ResponseEntity<List<ChatResponse>> getAllChats(Authentication authentication) {
-           return ResponseEntity.ok(chatService.getChatsByReceiverId(authentication));
+        List<ChatResponse> chatResponses = chatService.getChatsByReceiverId(authentication);
+        // Tạo một bản sao mutable của danh sách
+        List<ChatResponse> mutableChatResponses = new ArrayList<>(chatResponses);
+        // Sắp xếp danh sách mutable
+        mutableChatResponses.sort(Comparator.comparing(ChatResponse::getLastMessageTime, Comparator.nullsLast(Comparator.reverseOrder())));
+        return ResponseEntity.ok(mutableChatResponses);
     }
 }
