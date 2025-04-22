@@ -11,6 +11,8 @@ import {PickerComponent} from '@ctrl/ngx-emoji-mart';
 import {EmojiData} from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import {MessageRequest} from '../../service/models/message-request';
 import SockJS from 'sockjs-client';
+import * as Stomp from 'stompjs';
+import {Notification} from './models/notification';
 
 @Component({
   selector: 'app-main',
@@ -31,6 +33,8 @@ export class MainComponent implements OnInit{
   chatMessages: Array<MessageResponse> = []; // MessageResponse[] = [];
   showEmojis = false;
   messageContent: string = '';
+  private socketClient: any = null;
+  private notificationSubscription: any;
 
 
   constructor(
@@ -183,8 +187,81 @@ export class MainComponent implements OnInit{
 
 
   private initWebsocket() {
-    if (this.keycloakService.keycloak.tokenParsed?.sub) {
-      let ws = new SockJS('');
+    if (this.keycloakService.keycloak.tokenParsed?.sub) { // kiểm tra nếu người dùng đã dăng nhập tức tồn tại sub (sub chứa id)
+      let ws = new SockJS('http://localhost:8080/ws');
+      this.socketClient = Stomp.over(ws);
+      const subUrl = `/user/${this.keycloakService.keycloak.tokenParsed?.sub}/chat`;
+      this.socketClient.connect({'Authorization': 'Bearer ' + this.keycloakService.keycloak.token},
+        () => {
+          this.notificationSubscription = this.socketClient.subscribe(subUrl,
+            (message: any) => {
+              console.log('reponseeeeeeeee:     ', message)
+              const notification: Notification = JSON.parse(message.body);
+              console.log('bắt đầu handle thông báo......')
+              this.handleNotification(notification);
+              console.log('đã handle')
+            },
+            () => console.error('Error while connecting to webSocket')
+          );
+        }
+      );
     }
   }
+
+
+
+  private handleNotification(notification: Notification) {
+    if (!notification) return;
+    if (this.selectedChat && this.selectedChat.id === notification.chatId) {
+      console.log('okokokokokokokokok')
+      console.log('TYPEEEEEEEE:     ',notification.notificationType)
+      switch (notification.notificationType) {
+        case 'MESSAGE':
+        case 'IMAGE':
+          const message: MessageResponse = {
+            senderId: notification.senderId,
+            receiverId: notification.recipientId,
+            content: notification.content,
+            type: notification.messageType,
+            media: notification.media,
+            createdAt: new Date().toString()
+          };
+          if (notification.notificationType === 'IMAGE') {
+            this.selectedChat.lastMessage = 'Attachment';
+          } else {
+            this.selectedChat.lastMessage = notification.content;
+          }
+          console.log('Before push:', this.chatMessages.length);
+          this.chatMessages.push(message);
+          console.log('After push:', this.chatMessages.length);
+          break;
+        case 'SEEN':
+          this.chatMessages.forEach(m => m.state = 'SEEN');
+          break;
+      }
+    } else {
+      const destChat = this.chats.find(c => c.id === notification.chatId);
+      if (destChat && notification.notificationType !== 'SEEN') {
+        if (notification.notificationType === 'MESSAGE') {
+          destChat.lastMessage = notification.content;
+        } else if (notification.notificationType === 'IMAGE') {
+          destChat.lastMessage = 'Attachment';
+        }
+        destChat.lastMessageTime = new Date().toString();
+        destChat.unreadCount! += 1;
+      } else if (notification.notificationType === 'MESSAGE') {
+        const newChat: ChatResponse = {
+          id: notification.chatId,
+          senderId: notification.senderId,
+          recipientId: notification.recipientId,
+          lastMessage: notification.content,
+          chatName: notification.chatName,
+          unreadCount: 1,
+          lastMessageTime: new Date().toString()
+        };
+        this.chats.unshift(newChat);
+      }
+    }
+  }
+
 }
