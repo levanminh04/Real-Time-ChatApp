@@ -23,6 +23,13 @@ public class UserController {
     public ResponseEntity<List<UserResponse>> getAllUsersExceptSelf(Authentication authentication) {
         return ResponseEntity.ok(userService.getAllUsersExceptSelf(authentication));
     }
+
+    @GetMapping
+    public ResponseEntity<List<UserResponse>> SearchUsersByKeywordExceptSelf(Authentication authentication){
+
+        return null;
+    }
+
 }
 
 

@@ -5,11 +5,13 @@ import {ChatService} from '../../service/services/chat.service';
 import {UserService} from '../../service/services/user.service';
 import {KeycloakService} from '../../../utils/keycloak/keycloak.service';
 import {DatePipe} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-chat-list',
   imports: [
-    DatePipe
+    DatePipe,
+    FormsModule
   ],
   templateUrl: './chat-list.component.html',
   standalone: true,
@@ -21,6 +23,7 @@ export class ChatListComponent {
   searchNewContact: boolean = false;
   contacts:Array<UserResponse> = [];
   chatSelected = output<ChatResponse>();
+  searchContent: string = '';
 
 
   constructor(
@@ -103,4 +106,13 @@ export class ChatListComponent {
       })
   }
 
+  searchUsersByKeyword() {
+    this.userService.searchUsersByKeyword(this.searchContent)
+      .subscribe({
+        next:(res)=>{
+          this.contacts = res;
+          this.searchNewContact = true;
+        }
+      })
+  }
 }

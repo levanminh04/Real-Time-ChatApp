@@ -15,9 +15,23 @@
   <div class = "d-flex p-2">
     <div class = "input-group">
       <span class = "input-group-text">
-        <i class = "fas fa-search cursor-pointer"></i>
+        <i class = "fas fa-search cursor-pointer" (click) = "searchUsersByKeyword()"></i>
       </span>
-      <input type="text" class = "form-control flex-grow-1" placeholder="Search">
+      @if (!searchNewContact){
+        <input
+          type="text"
+          [(ngModel)] = "searchContent"
+          class = "form-control flex-grow-1"
+          (keyup.enter)="searchUsersByKeyword()"
+          placeholder="Search">
+      } @else {
+        <input
+          type="text"
+          [(ngModel)] = "searchContent"
+          (keyup.enter)="searchUsersByKeyword()"
+          class = "form-control flex-grow-1"
+          placeholder="Search" >
+      }
     </div>
 
   </div>

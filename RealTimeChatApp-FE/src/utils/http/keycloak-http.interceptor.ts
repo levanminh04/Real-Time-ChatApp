@@ -26,3 +26,4 @@ export const keycloakHttpInterceptor: HttpInterceptorFn = (req, next) => {
 // Thay vào đó, clone() tạo một bản sao của request, có thể thay đổi một số thuộc tính mà không làm mất request gốc.
 // 🔹 req (request gốc) vẫn không thay đổi.
 // 🔹 authReq là một request mới, giống req nhưng có thêm Authorization Header.
+

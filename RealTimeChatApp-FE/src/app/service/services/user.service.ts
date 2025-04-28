@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../strict-http-response';
 import { UserResponse } from '../models/user-response';
+import {ChatResponse} from '../models/chat-response';
 
 @Injectable({
   providedIn: 'root'
@@ -36,5 +37,14 @@ export class UserService {
    */
   getAllUsersExceptSelf$Response(context?: HttpContext): Observable<StrictHttpResponse<UserResponse[]>> {
     return this.http.get<StrictHttpResponse<UserResponse[]>>(this.apiUrl, { context });
+  }
+
+  searchUsersByKeyword(searchContent: string) {
+    return this.http.get<UserResponse[]>(`${this.apiUrl}/search`, {
+      params: {
+        'keyword': searchContent
+      },
+      headers: { Accept: 'application/json' }
+    });
   }
 }
