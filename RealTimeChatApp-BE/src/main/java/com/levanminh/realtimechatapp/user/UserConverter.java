@@ -39,6 +39,7 @@ public class UserConverter {
                 .id(user.getId())
                 .lastSeen(user.getLastSeen())
                 .isOnline(user.isUserOnline())
+                .avatarUrl(user.getAvatar())
                 .build();
     }
 }

@@ -11,6 +11,7 @@ export interface ChatResponse {
   recipientOnline?: boolean;
   senderId?: string;
   unreadCount?: number;
+  avatarUrl?:string;
 }
 
 

@@ -33,3 +33,12 @@ application:
   file:
     uploads:
       media-output-path: ./uploads
+
+cloudinary:
+  cloud-name: diju35umx
+  api-key: 126973877632524
+  api-secret: Jn81qsBQIs0GBygOQyIwmsj0R0I
+
+#  cloudinary.cloud-name=${CLOUDINARY_CLOUD_NAME}
+#  cloudinary.api-key=${CLOUDINARY_API_KEY}
+#  cloudinary.api-secret=${CLOUDINARY_API_SECRET}

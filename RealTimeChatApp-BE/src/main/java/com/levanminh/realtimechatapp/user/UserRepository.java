@@ -21,4 +21,6 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
 
     @Query(name = UserConstants.FIND_ALL_USERS_EXCEPT_SEFT)
     List<User> findAllUsersExceptSelf(@Param("publicId") String publicId);
+
+    Optional<User> findById(String id);
 }

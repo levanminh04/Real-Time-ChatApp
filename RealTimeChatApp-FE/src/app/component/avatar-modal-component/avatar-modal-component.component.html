@@ -1,0 +1,61 @@
+
+<div class="modal-backdrop">
+  <div class="modal-content avatar-modal">
+    <div class="modal-header">
+      <h2>Cập nhật ảnh đại diện</h2>
+      <button class="close-btn" type="button" (click)="closeModal()" aria-label="Đóng">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="avatar-preview-section">
+
+        @if(currentUser().avatarUrl){
+        <div class="current-avatar">
+          <span>Ảnh hiện tại</span>
+          <img [src]=currentUser().avatarUrl alt="Avatar hiện tại" class="avatar-img">
+        </div>
+        } @else {
+          <div class="current-avatar">
+            <span>Ảnh hiện tại</span>
+            <img src="user_img.jpg" alt="Avatar hiện tại" class="avatar-img">
+          </div>
+        }
+
+        <div class="new-avatar">
+          <span>Ảnh mới</span>
+
+          @if (previewUrl) {
+            <img [src]="previewUrl" alt="Preview ảnh mới" class="avatar-img preview">
+          } @else {
+            <div class="avatar-placeholder">Chưa chọn ảnh</div>
+          }
+        </div>
+
+
+      </div>
+      <div class="choose-file-section">
+        <input #inputFile type="file" accept="image/*" (change)="onFileSelected($event)" hidden>
+<!--                Trong HTML và Angular, sự kiện change là một sự kiện DOM được kích hoạt khi giá trị của một phần tử (như <input>, <select>, hoặc <textarea>) thay đổi và đưoc xác nhận-->
+<!--                (change): Đây là event binding trong Angular, cho biết Angular sẽ lắng nghe sự kiện change của phần tử.-->
+
+        <button type="button" class="choose-btn" (click)="inputFile.click()">Chọn ảnh mới</button>
+      </div>
+      @if(errorMessage){
+        <div class="error-message" >{{ errorMessage }}</div>
+      }
+    </div>
+    <div class="modal-footer">       <!--      [disabled]: Nút sẽ bị vô hiệu hóa (không thể nhấn) theo các điều kiện "loading || !selectedFile": -->
+      <button class="upload-btn" type="button" [disabled]="loading || !selectedFile" (click)="uploadAvatar()">
+        @if (loading) {
+          <span class="spinner"></span>  <!--   Hiển thị biểu tượng quay khi đang tải -->
+        } @else {
+          <span>Cập nhật</span>          <!--   Hiển thị chữ "Cập nhật" khi không tải -->
+        }
+      </button>
+      <button class="cancel-btn" type="button" (click)="closeModal()">Hủy</button>
+    </div>
+  </div>
+</div>
+
+

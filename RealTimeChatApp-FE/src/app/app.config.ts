@@ -22,3 +22,8 @@ export const appConfig: ApplicationConfig = { // ApplicationConfig là kiểu d�
     provideAppInitializer(initializeKeycloak) // provideAppInitializer cần một HÀM trả về một Promise hoặc void để nó tự gọi khi cần., chứ không phải kết quả của hàm
   ]                                           // initializeKeycloak trả về hàm có thể được gọi sau này not trả về kết quả của hàm còn initializeKeycloak() trả về kết quả của hàm
 };
+
+
+
+
+

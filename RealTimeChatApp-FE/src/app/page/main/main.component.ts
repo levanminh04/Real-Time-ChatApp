@@ -7,12 +7,16 @@ import {MessageService} from '../../service/services/message.service';
 import {MessageResponse} from '../../service/models/message-response';
 import {DatePipe} from '@angular/common';
 import {FormsModule} from '@angular/forms';
+import {Router} from '@angular/router';
 import {PickerComponent} from '@ctrl/ngx-emoji-mart';
 import {EmojiData} from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import {MessageRequest} from '../../service/models/message-request';
 import SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
 import {Notification} from './models/notification';
+import {AvatarModalComponentComponent} from '../../component/avatar-modal-component/avatar-modal-component.component';
+import {UserResponse} from '../../service/models/user-response';
+import {UserService} from '../../service/services/user.service';
 
 @Component({
   selector: 'app-main',
@@ -20,7 +24,8 @@ import {Notification} from './models/notification';
     ChatListComponent,
     DatePipe,
     FormsModule,
-    PickerComponent
+    PickerComponent,
+    AvatarModalComponentComponent
   ],
   templateUrl: './main.component.html',
   standalone: true,
@@ -35,17 +40,25 @@ export class MainComponent implements OnInit{
   messageContent: string = '';
   private socketClient: any = null;
   private notificationSubscription: any;
-
+  avatarModalVisible: boolean = false;
+  currentUser:UserResponse={}
 
   constructor(
     private chatService: ChatService,
     private keycloakService: KeycloakService,
-    private messageService: MessageService) {
+    private messageService: MessageService,
+    private userService: UserService,
+    private router: Router) {
+  }
+  
+  openChatbot() {
+    this.router.navigate(['/chatbot']);
   }
 
   ngOnInit(): void {
     this.getAllChats();
     this.initWebsocket();
+    this.getCurrentUser();
   }
 
   private getAllChats(){
@@ -95,8 +108,8 @@ export class MainComponent implements OnInit{
     this.messageService.setMessageToSeen(
       this.selectedChat.id as string
     ).subscribe({
-        next: () =>{}
-      });
+      next: () =>{}
+    });
   }
 
   private getSenderId(){
@@ -264,4 +277,27 @@ export class MainComponent implements OnInit{
     }
   }
 
+
+  openAvatarModal() {
+    this.avatarModalVisible = true;
+  }
+
+  onAvatarUpdated(newAvatarUrl: string) {
+    this.currentUser.avatarUrl = newAvatarUrl;
+    this.avatarModalVisible = false;
+  }
+
+  private getCurrentUser() {
+    this.userService.getCurrentUser()
+      .subscribe({
+        next:(res)=>{
+          this.currentUser = res;
+          console.log('currentUser: ', res)
+        },
+        error: (err) => {
+          console.error('Lỗi khi gọi API getCurrentUser:', err);
+        }
+      })
+
+  }
 }

@@ -25,6 +25,7 @@ public class UserSynchronizer {
             Optional<User> optionalUser = userRepository.findByEmail(email);
             User user = userConverter.fromTokenAttributes(token.getClaims());
             optionalUser.ifPresent(value -> user.setId(value.getId()));
+            optionalUser.ifPresent(value -> user.setAvatar(value.getAvatar()));
             userRepository.save(user);
         });
     }

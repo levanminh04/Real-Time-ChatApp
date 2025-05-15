@@ -18,4 +18,5 @@ public class ChatResponse {
     private boolean isRecipientOnline; // recipient là đối phương trong cuộc trò chuyện, không nên để là isUserOnline
     private String senderId;
     private String recipientId;
+    private String avatarUrl;
 }

@@ -43,11 +43,12 @@ public class MessageController {
     @PatchMapping // Cập nhật một phần tài nguyên hiện có
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void setMessageToSeen(@RequestParam("chat-id") String chatId,
-                                 Authentication authentication) {
+                                 Authentication authentication) {//
         messageService.setMessageStateToSeen(chatId, authentication);
     }
-
-
+//    @RequestParam được sử dụng để ánh xạ các tham số từ yêu cầu HTTP vào các tham số của phương thức controller. cách dữ liệu được truyền (qua query string hay body) phụ thuộc vào Content-Type của yêu cầu và loại dữ liệu được gửi.
+//    Trong các yêu cầu GET, @RequestParam luôn ánh xạ từ query string (ví dụ: /path?param=value).
+//    Trong thực tế, khi gửi object thông thường qua POST, dữ liệu thường được gửi trong body dưới dạng form data (không phải query string), vì query string không được khuyến khích cho dữ liệu lớn hoặc nhạy cảm.
     @GetMapping("/chat/{chatId}")
     public ResponseEntity<List<MessageResponse>> getAllMessages(
             @PathVariable String chatId

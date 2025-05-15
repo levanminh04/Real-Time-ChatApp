@@ -16,7 +16,6 @@ export class KeycloakService {
   }
 
   // private router: Router; // Nếu không inject vào constructor thì phải khai báo như thế này, private router: Router giúp  Tự động gán router thành thuộc tính của class KeycloakService
-  // private router: Router;
   // constructor(router: Router) {
   //   this.router = router; // ✅ Phải gán thủ công
   // }
@@ -32,6 +31,7 @@ export class KeycloakService {
     }
     return this._keycloak;
   }
+
 
     async init(){
       const authenticated = await this.keycloak.init({    // this.keycloak ở đây là getter trả về đối tượng Đối tượng Keycloak, đối tượng này cung cấp các hàm như init(), login(), logout(), accountManagement(), hasRealmRole()...

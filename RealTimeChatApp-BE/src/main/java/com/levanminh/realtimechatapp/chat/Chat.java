@@ -24,7 +24,10 @@ import java.util.List;
 @Table(name = "chat")
 
 @NamedQuery(name = ChatConstants.FIND_ALL_CHATS_BY_USERID,
-        query = "SELECT DISTINCT c FROM Chat c WHERE c.sender.id = :userId OR c.recipient.id = :userId ORDER BY createdDate DESC"  // jpa không hỗ trợ DISTINCT, ORDER BY, cũng như truy vấn phức tạp and or and như lệnh FIND_CHAT_BETWEEN_TWO_USERS bên dưới, vì vậy cần tự custom JPQL
+        query = "SELECT DISTINCT c FROM Chat c " +
+                "WHERE (c.sender.id = :userId OR c.recipient.id = :userId)" +
+                " AND EXISTS(SELECT 1 FROM Message m WHERE m.chat = c)" +
+                " ORDER BY c.createdDate DESC"  // jpa không hỗ trợ DISTINCT, ORDER BY, cũng như truy vấn phức tạp and or and như lệnh FIND_CHAT_BETWEEN_TWO_USERS bên dưới, vì vậy cần tự custom JPQL
 )
 
 @NamedQuery(name = ChatConstants.FIND_CHAT_BETWEEN_TWO_USERS,

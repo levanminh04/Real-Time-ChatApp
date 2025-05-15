@@ -47,4 +47,20 @@ export class UserService {
       headers: { Accept: 'application/json' }
     });
   }
+
+
+
+
+  uploadAvatar(file: File): Observable<UserResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<UserResponse>(`${this.apiUrl}/avatar`, formData, {
+      responseType: 'json' // Bắt buộc parse response thành JSON
+    });
+  }
+
+
+  getCurrentUser() {
+    return this.http.get<UserResponse>(`${this.apiUrl}/me`);
+  }
 }

@@ -11,6 +11,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -45,11 +46,26 @@ public class User extends BaseAuditingEntity {
     @OneToMany(mappedBy = "recipient")
     private List<Chat> chatsAsRecipient;
 
+    @Column(name = "avatar") // Lưu URL của ảnh từ Cloudinary
+    private String avatar;
+
     @Transient // @Transient đánh dấu một field không được ánh xạ vào database. chỉ sử dụng để xử lý logic trong Java, nhưng không cần lưu vào database.
     public boolean isUserOnline(){
         return this.lastSeen != null && this.lastSeen.isAfter(LocalDateTime.now().minusMinutes(LAST_ACTIVE_INTERVAL));
     }
     // Nếu lastSeen nằm sau mốc này (tức là user có hoạt động trong 5 phút gần đây) → User được coi là online.
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
 
 

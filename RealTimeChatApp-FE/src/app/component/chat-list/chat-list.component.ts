@@ -24,7 +24,7 @@ export class ChatListComponent {
   contacts:Array<UserResponse> = [];
   chatSelected = output<ChatResponse>();
   searchContent: string = '';
-
+  currentUser: InputSignal<UserResponse> = input<UserResponse>({});
 
   constructor(
     private chatService: ChatService,

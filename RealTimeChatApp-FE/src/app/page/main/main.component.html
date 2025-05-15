@@ -3,13 +3,23 @@
 
   <div class="main-container">
 
-    <div class="bisque-background">
-      <div>
+    <div class="bisque-background">      <div>
         <i class="fa-brands fa-rocketchat responsive-icon cursor-pointer"></i>
       </div>
 
       <div class = "d-flex flex-column justify-content-between">
-        <i class="fa-solid fa-user responsive-icon cursor-pointer" style="margin: 0 0 26px 0" (click) = userProfile()></i>
+        <i class="fa-solid fa-circle-user responsive-icon cursor-pointer" style="margin: 0 0 26px 0" (click)="openAvatarModal()"></i>
+
+        @if (avatarModalVisible) {
+          <app-avatar-modal-component
+            (close)="avatarModalVisible = false"
+            (avatarUpdated)="onAvatarUpdated($event)"
+            [(currentUser)]="currentUser">
+<!--         ở đây dùng  two way binding [()]  nhờ model ở component con thay vì input và output singnal để cập nhật 2 chiều giữa cha và con vì với outputSingal thì con chỉ có quyền đọc từ cha, không có quyền sửa ngược lại-->
+          </app-avatar-modal-component>
+        }
+
+        <i class="fas fa-cog responsive-icon cursor-pointer" style="margin: 0 0 26px 0" (click) = userProfile()></i>
         <i class="fa-solid fa-right-from-bracket responsive-icon cursor-pointer" (click) = "logout()"></i>
       </div>
     </div>
@@ -18,6 +28,7 @@
       <div class = "col-3 overflow-auto" > <!-- overflow-auto  .col-3 bị ảnh hưởng bởi div.d-flex, do đó, nó chiếm 25% chiều rộng của div.d-flex, chứ không phải của .main-container trực tiếp.-->
         <app-chat-list
           [chats]="chats"
+          [currentUser] = "currentUser"
         (chatSelected)="chatSelected($event)"
         >
           <!--  Cú pháp [] được sử dụng để bind một giá trị từ component cha vào một property của component con  -->
@@ -32,10 +43,18 @@
         <div class = "col-9">
           <div class = "d-flex justify-content-between flex-column h-100"> <!-- h-100 = height: 100% -->
             <div class = " p-2">
-              <div class = "d-flex gap-2">
-                <div class = "user-img">
-                  <img src="user_img.jpg" alt = "user-image">
-                </div>
+              <div class = "d-flex justify-content-between">
+
+                <div class = "d-flex gap-2">
+                  @if(selectedChat.avatarUrl){
+                    <div class = "user-img">
+                      <img [src]=selectedChat.avatarUrl alt = "user-image">
+                    </div>
+                  } @else {
+                    <div class="user-img">
+                      <img src="user_img.jpg" alt="Avatar hiện tại">
+                    </div>
+                  }
                 <div class = "d-flex flex-column">
                   <span> {{selectedChat.chatName}}</span>
                   <div class = "d-flex gap-1 align-items-center">
@@ -54,6 +73,13 @@
                     }
                   </div>
                 </div>
+              </div>
+
+                <div class = "d-flex align-items-center cursor-pointer gap-3  pe-4">
+                  <i class="fa-solid fa-phone"></i>
+                  <i class="fas fa-video"></i>
+                </div>
+
               </div>
             </div>
 
