@@ -32,7 +32,7 @@ public class MessageController {
     @PostMapping(value = "/media", consumes = "multipart/form-data") // @RequestBody không hỗ trợ multipart/form-data mặc định vì vậy cần có consumes = "multipart/form-data" để Spring cần biết request này có chứa multipart/form-data, nhưng ở đây có thể bỏ consumes vì có sử dụng RequestPart
     @ResponseStatus(HttpStatus.CREATED)  // Nếu bỏ đi: Spring sẽ mặc định trả về 200 OK thay vì 201 CREATED.
     public void uploadMediaMessage(
-            @RequestParam("chat-id") String chatId,
+            @RequestParam("chat-id") String chatId, // truyền qua query paramater (@RequestParam), còn của getAllMessages thì gọi là URI path paramater (@PathVariable)
             @Parameter(description = "File media cần upload")
             @RequestPart("file") MultipartFile file,
             Authentication authentication

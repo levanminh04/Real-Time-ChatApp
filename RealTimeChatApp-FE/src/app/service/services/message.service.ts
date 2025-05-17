@@ -25,7 +25,7 @@ export class MessageService {
     });
   }
   // Tải lên media cho tin nhắn
-  uploadMediaMessage(chatId: string, file: Blob): Observable<void> {
+  uploadMediaMessage(chatId: string, file: File): Observable<void> {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post<void>(`${this.baseUrl}/media`, formData, {

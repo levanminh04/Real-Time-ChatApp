@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ChatListComponent} from '../../component/chat-list/chat-list.component';
 import {ChatResponse} from '../../service/models/chat-response';
 import {ChatService} from '../../service/services/chat.service';
@@ -31,7 +31,7 @@ import {UserService} from '../../service/services/user.service';
   standalone: true,
   styleUrl: './main.component.scss'
 })
-export class MainComponent implements OnInit{
+export class MainComponent implements OnInit, OnDestroy{
 
   chats: Array<ChatResponse> = [];
   selectedChat: ChatResponse = {}; // khai báo selectedChat là 1 ChatResponse - object rỗng, vì các thuộc tính của ChatResponse là tùy chọn ? nên khai báo này hợp lệ kể từ typescipt 4.0+
@@ -39,6 +39,8 @@ export class MainComponent implements OnInit{
   showEmojis = false;
   messageContent: string = '';
   private socketClient: any = null;
+  @ViewChild('scrollableDiv') scrollableDiv!: ElementRef<HTMLDivElement>;
+
   private notificationSubscription: any;
   avatarModalVisible: boolean = false;
   currentUser:UserResponse={}
@@ -48,18 +50,37 @@ export class MainComponent implements OnInit{
     private keycloakService: KeycloakService,
     private messageService: MessageService,
     private userService: UserService,
-    private router: Router) {
+    ) {
   }
-  
-  openChatbot() {
-    this.router.navigate(['/chatbot']);
-  }
+
+
 
   ngOnInit(): void {
     this.getAllChats();
     this.initWebsocket();
     this.getCurrentUser();
   }
+
+
+  ngAfterViewChecked(): void {
+    this.scrollToBottom();
+  }
+
+  private scrollToBottom() {
+    if (this.scrollableDiv) {
+      const div = this.scrollableDiv.nativeElement;
+      div.scrollTop = div.scrollHeight;
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.socketClient !== null) {
+      this.socketClient.disconnect();
+      this.notificationSubscription.unsubscribe();
+      this.socketClient = null;
+    }
+  }
+
 
   private getAllChats(){
     console.log('getAllChats đang được gọi');
@@ -151,7 +172,48 @@ export class MainComponent implements OnInit{
 
   uploadMedia(target: EventTarget | null) {
 
+    const input = target as HTMLInputElement;
+    if(input.files != null && input.files.length > 0){
+      const file = input.files[0];
+
+      const reader = new FileReader();
+      reader.onload = () => {      // .result trong đối tượng FileReader là thuộc tính lưu trữ kết quả của quá trình đọc file sau khi hoàn tất. Kiểu của result phụ thuộc vào phương thức đọc file mà bạn sử dụng
+                                         // Với readAsText(): result là chuỗi văn bản, Với readAsArrayBuffer(): result là ArrayBuffer
+        if(reader.result){               // Khi sử dụng readAsDataURL(), result sẽ có định dạng: data:[<mediatype>][;base64],<data>
+          const base64ImageString = reader.result.toString().split(',')[1];  // .toString() chuyển đổi thành string (để chắc chắn), .split(',')[1] tách chuỗi tại dấu phẩy và lấy phần thứ hai, Kết quả là chuỗi base64 thuần túy (phần /9j/4AAQ...) không có prefix data:image/jpeg;base64,
+          this.messageService.uploadMediaMessage(
+            this.selectedChat.id as string, file
+          ).subscribe({
+            next: ()=>{
+              const message: MessageResponse = {
+                senderId: this.getSenderId(),
+                receiverId: this.getReceiverId(),
+                content: 'Attachment',
+                type:'IMAGE',
+                state:'SENT',
+                media:[base64ImageString],
+                createdAt:new Date().toString()
+              }
+              this.chatMessages.push(message) // thêm vào cuối mảng
+            }
+          })
+        }
+
+      }
+      reader.readAsDataURL(file);  // hàm này đọc xong thì reader.onload mới thực thi
+    }
   }
+
+
+  private extractFileFromTarget(target: EventTarget | null): File | null {
+    const htmlInputTarget = target as HTMLInputElement;
+    if (target === null || htmlInputTarget.files === null) {
+      return null;
+    }
+    return htmlInputTarget.files[0];
+  }
+
+
 
   keyDown($event: KeyboardEvent) {
     const pressedKey = $event.key

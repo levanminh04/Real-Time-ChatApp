@@ -36,7 +36,7 @@ export class AvatarModalComponentComponent {
       this.errorMessage = 'Vui lòng chọn ảnh trước khi tải lên';
       return;
     }
-    console.log('loading')
+
     this.loading = true;
     this.errorMessage = null;
     this.userService.uploadAvatar(this.selectedFile)
@@ -69,18 +69,41 @@ export class AvatarModalComponentComponent {
   }
 
 
+  /**
+   * Xử lý sự kiện khi người dùng chọn file ảnh đại diện mới
+   * @param event - Sự kiện input change được kích hoạt khi người dùng chọn file
+   */
   onFileSelected(event: Event) {
+    // Ép kiểu event.target thành HTMLInputElement để truy cập thuộc tính files
     const input = event.target as HTMLInputElement;
+
+    // Kiểm tra xem người dùng đã chọn file nào chưa
     if (input.files && input.files.length > 0) {
+      // Lấy file đầu tiên được chọn và lưu vào biến selectedFile vì ảnh đại diện thì chỉ được chọn duy nhất 1 cái
       this.selectedFile = input.files[0];
 
-      // Tạo previewUrl
-      const reader = new FileReader();
+      // Tạo URL xem trước (preview) của ảnh
+      const reader = new FileReader(); // Tạo một đối tượng FileReader để đọc file
+
+      // Định nghĩa hàm callback sẽ được gọi khi FileReader hoàn thành việc đọc file
       reader.onload = (e: ProgressEvent<FileReader>) => {
+        // e.target?.result chứa nội dung file dưới dạng Data URL
+        // Gán Data URL (chuỗi base64) vào previewUrl để hiển thị ảnh xem trước
         this.previewUrl = e.target?.result as string;
       };
-      reader.readAsDataURL(this.selectedFile);
-    } else {
+
+      // Bắt đầu đọc file dưới dạng Data URL (chuỗi base64)
+      // Data URL có định dạng: data:image/jpeg;base64,/9j/4AAQSkZJRgAB...
+      // Chuỗi Base64 được tự động giải mã bởi trình duyệt khi bạn gán nó cho thuộc tính src của thẻ <img>
+      
+      reader.readAsDataURL(this.selectedFile); 
+//     Phương thức readAsDataURL() của đối tượng FileReader thực hiện việc đọc nội dung của file (trong trường hợp này là this.selectedFile) và chuyển đổi nó thành chuỗi dữ liệu dạng Data URL.
+//     Khi quá trình đọc hoàn tất, sự kiện onload được kích hoạt
+//     Callback function mà bạn đã định nghĩa trước đó (reader.onload = ...) sẽ được thực thi
+//     reader.onload là một property mà bạn gán một hàm callback vào. Hàm này sẽ được tự động gọi bởi JavaScript runtime khi quá trình đọc file hoàn tất, cho phép code của bạn phản ứng với sự kiện đó để xử lý kết quả (trong trường hợp này là hiển thị ảnh preview).
+    
+  } else {
+      // Trường hợp không có file nào được chọn hoặc người dùng hủy chọn file
       this.selectedFile = null;
       this.previewUrl = null;
     }
