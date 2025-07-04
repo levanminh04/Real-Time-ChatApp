@@ -260,80 +260,168 @@ export class MainComponent implements OnInit, OnDestroy{
     this.messageContent += emoji.native;
   }
 
-
+  /**
+   * Khởi tạo kết nối WebSocket để nhận tin nhắn thời gian thực
+   * WebSocket cho phép server chủ động gửi thông báo đến client mà không cần client polling
+   */
   private initWebsocket() {
-    if (this.keycloakService.keycloak.tokenParsed?.sub) { // kiểm tra nếu người dùng đã dăng nhập tức tồn tại sub (sub chứa id)
+    // Kiểm tra người dùng đã đăng nhập hay chưa thông qua JWT token
+    // sub (subject) là thuộc tính chứa ID người dùng trong JWT token
+    if (this.keycloakService.keycloak.tokenParsed?.sub) {
+
+      // Bước 1: Tạo kết nối WebSocket thô sử dụng SockJS
+      // SockJS cung cấp WebSocket-like object với fallback cho các trình duyệt cũ
+      // Endpoint '/ws' được cấu hình trong Spring Boot backend
       let ws = new SockJS('http://localhost:8080/ws');
+
+      // Bước 2: Bọc SockJS connection bằng STOMP protocol
+      // STOMP (Streaming Text Oriented Messaging Protocol) cung cấp:
+      // - Message framing và định dạng tin nhắn
+      // - Pub/Sub messaging pattern
+      // - Khả năng subscribe vào nhiều destination khác nhau
       this.socketClient = Stomp.over(ws);
+
+      // Bước 3: Tạo URL subscription dành riêng cho user hiện tại
+      // Pattern: /user/{userId}/chat - mỗi user có một channel riêng
+      // Server sẽ gửi thông báo đến đúng user thông qua URL này
       const subUrl = `/user/${this.keycloakService.keycloak.tokenParsed?.sub}/chat`;
-      this.socketClient.connect({'Authorization': 'Bearer ' + this.keycloakService.keycloak.token},
+
+      // Bước 4: Thiết lập kết nối STOMP với JWT token để xác thực
+      // Header 'Authorization: Bearer {token}' được gửi kèm để server verify user
+      this.socketClient.connect(
+        {'Authorization': 'Bearer ' + this.keycloakService.keycloak.token},
+
+        // Success callback - được gọi khi kết nối thành công
         () => {
-          this.notificationSubscription = this.socketClient.subscribe(subUrl,
+          // Bước 5: Subscribe vào channel của user để nhận thông báo
+          // Khi có tin nhắn mới, server sẽ gửi notification đến channel này
+          this.notificationSubscription = this.socketClient.subscribe(
+            subUrl,
+
+            // Message handler - xử lý khi nhận được thông báo từ server
             (message: any) => {
-              console.log('reponseeeeeeeee:     ', message)
+              console.log('Nhận được tin nhắn WebSocket:', message);
+
+              // Parse JSON từ message body thành object Notification
+              // Backend gửi các loại notification: MESSAGE, IMAGE, SEEN
               const notification: Notification = JSON.parse(message.body);
-              console.log('bắt đầu handle thông báo......')
+              console.log('Bắt đầu xử lý thông báo...', notification);
+
+              // Gọi handler để cập nhật UI dựa trên loại notification
               this.handleNotification(notification);
-              console.log('đã handle')
+              console.log('Đã xử lý xong thông báo');
             },
-            () => console.error('Error while connecting to webSocket')
+
+            // Error callback - xử lý lỗi khi subscribe
+            () => console.error('Lỗi khi kết nối WebSocket hoặc subscribe channel')
           );
+        },
+
+        // Connection error callback - xử lý lỗi khi connect
+        (error: any) => {
+          console.error('Lỗi khi thiết lập kết nối WebSocket:', error);
         }
       );
     }
   }
 
 
-
+  /**
+   * Xử lý các thông báo nhận được từ WebSocket
+   * Cập nhật UI theo thời gian thực dựa trên loại thông báo và trạng thái hiện tại
+   *
+   * @param notification - Object chứa thông tin về tin nhắn/sự kiện từ server
+   */
   private handleNotification(notification: Notification) {
+    // Kiểm tra notification có hợp lệ không
     if (!notification) return;
+
+    // TRƯỜNG HỢP 1: Thông báo thuộc về cuộc trò chuyện đang được chọn
+    // → Cập nhật trực tiếp trong chat hiện tại
     if (this.selectedChat && this.selectedChat.id === notification.chatId) {
-      console.log('okokokokokokokokok')
-      console.log('TYPEEEEEEEE:     ',notification.notificationType)
+      console.log('Thông báo thuộc chat đang được chọn');
+      console.log('Loại thông báo:', notification.notificationType);
+
       switch (notification.notificationType) {
+
+        // Xử lý tin nhắn văn bản và hình ảnh
         case 'MESSAGE':
         case 'IMAGE':
+          // Tạo object MessageResponse từ notification để hiển thị trong chat
           const message: MessageResponse = {
             senderId: notification.senderId,
             receiverId: notification.recipientId,
             content: notification.content,
-            type: notification.messageType,
-            media: notification.media,
-            createdAt: new Date().toString()
+            type: notification.messageType,    // 'TEXT' hoặc 'IMAGE'
+            media: notification.media,         // Mảng chứa base64 image nếu là IMAGE
+            createdAt: new Date().toString()   // Timestamp hiện tại
           };
+
+          // Cập nhật tin nhắn cuối cùng trong chat header
           if (notification.notificationType === 'IMAGE') {
-            this.selectedChat.lastMessage = 'Attachment';
+            this.selectedChat.lastMessage = 'Attachment'; // Hiển thị "Attachment" thay vì nội dung image
           } else {
-            this.selectedChat.lastMessage = notification.content;
+            this.selectedChat.lastMessage = notification.content; // Hiển thị nội dung tin nhắn
           }
-          console.log('Before push:', this.chatMessages.length);
+
+          // Debug: Theo dõi số lượng tin nhắn trước và sau khi thêm
+          console.log('Số tin nhắn trước khi thêm:', this.chatMessages.length);
+
+          // Thêm tin nhắn mới vào cuối danh sách để hiển thị trong chat
           this.chatMessages.push(message);
-          console.log('After push:', this.chatMessages.length);
+
+          console.log('Số tin nhắn sau khi thêm:', this.chatMessages.length);
           break;
+
+        // Xử lý thông báo "đã xem" tin nhắn
         case 'SEEN':
+          // Đánh dấu tất cả tin nhắn trong chat hiện tại là đã xem
+          // Thay đổi icon từ "sent" (✓) thành "seen" (✓✓)
           this.chatMessages.forEach(m => m.state = 'SEEN');
           break;
       }
-    } else {
+
+    }
+    // TRƯỜNG HỢP 2: Thông báo thuộc về cuộc trò chuyện khác (không đang được chọn)
+    // → Cập nhật danh sách chat và badge thông báo
+    else {
+
+      // Tìm chat trong danh sách dựa trên chatId
       const destChat = this.chats.find(c => c.id === notification.chatId);
+
+      // Nếu tìm thấy chat và không phải thông báo "SEEN"
       if (destChat && notification.notificationType !== 'SEEN') {
+
+        // Cập nhật tin nhắn cuối cùng hiển thị trong danh sách chat
         if (notification.notificationType === 'MESSAGE') {
           destChat.lastMessage = notification.content;
         } else if (notification.notificationType === 'IMAGE') {
           destChat.lastMessage = 'Attachment';
         }
+
+        // Cập nhật thời gian tin nhắn cuối cùng
         destChat.lastMessageTime = new Date().toString();
+
+        // Tăng số lượng tin nhắn chưa đọc
         destChat.unreadCount! += 1;
-      } else if (notification.notificationType === 'MESSAGE') {
+      }
+
+      // TRƯỜNG HỢP 3: Tin nhắn từ cuộc trò chuyện mới (chưa tồn tại trong danh sách)
+      // → Tạo chat mới và thêm vào đầu danh sách
+      else if (notification.notificationType === 'MESSAGE') {
+
+        // Tạo object ChatResponse mới từ thông tin trong notification
         const newChat: ChatResponse = {
           id: notification.chatId,
           senderId: notification.senderId,
           recipientId: notification.recipientId,
           lastMessage: notification.content,
-          chatName: notification.chatName,
-          unreadCount: 1,
+          chatName: notification.chatName,        // Tên hiển thị của cuộc trò chuyện
+          unreadCount: 1,                        // Bắt đầu với 1 tin nhắn chưa đọc
           lastMessageTime: new Date().toString()
         };
+
+        // Thêm chat mới vào đầu danh sách (tin nhắn mới nhất lên trên)
         this.chats.unshift(newChat);
       }
     }

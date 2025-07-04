@@ -3,8 +3,11 @@ import {inject} from '@angular/core';
 import Keycloak from 'keycloak-js';
 import {KeycloakService} from '../keycloak/keycloak.service';
 
+// Client Request → Interceptor → Server
+// Client ← Interceptor ← Server Response
 
 // req: Request HTTP hiện tại.   next: Hàm để chuyển request đến bước tiếp theo trong pipeline (gửi đến backend).
+// HttpInterceptorFn không phải là decorator và Angular không tự động phát hiện nó. Bạn phải đăng ký thủ công interceptor trong cấu hình ứng dụng AppConfig.
 
 export const keycloakHttpInterceptor: HttpInterceptorFn =
   (req, next) => {

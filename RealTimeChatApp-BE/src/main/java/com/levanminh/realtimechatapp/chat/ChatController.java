@@ -32,6 +32,7 @@ public class ChatController {
         return ResponseEntity.ok(response);
     }
 
+
     @GetMapping
     public ResponseEntity<List<ChatResponse>> getAllChats(Authentication authentication) {
         List<ChatResponse> chatResponses = chatService.getChatsByReceiverId(authentication);

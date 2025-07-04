@@ -15,7 +15,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "messages")
 @NamedQuery(name = MessageConstants.FIND_MESSAGES_BY_CHAT_ID,
-        query = "SELECT m FROM Message m WHERE m.chat.id = :chatId ORDER BY m.createdDate"
+        query = "SELECT m FROM Message m WHERE m.chat.id = :chatId ORDER BY m.createdDate "
 )
 @NamedQuery(name = MessageConstants.UPDATE_MESSAGE_STATE_BY_CHAT_ID,
         query = "UPDATE Message SET state = :newState WHERE chat.id = :chatId"

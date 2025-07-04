@@ -36,6 +36,7 @@
           <!--  (chatSelected) là của component con <app-chat-list>, chatSelected($event) là hàm chatSelected() trong component cha main.component  -->
           <!--  Khi (chatSelected) của component con phát ra sự kiên, dự liệu từ component con sẽ được truyền đến cha và gán cho $event,
                 component cha sẽ sử dụng dữ liệu trong $event để hàm chatSelected() của component cha xử lý theo mục đích cụ thể   -->
+<!--          Angular sẽ tự động phát hiện và cập nhật giá trị currentUser trong component con mỗi khi biến currentUser ở component cha thay đổi, nhờ vào cơ chế change detection của Angular. Bạn không cần dùng @Output cho chiều truyền dữ liệu từ cha xuống con.  @Output chỉ cần thiết khi bạn muốn truyền dữ liệu hoặc sự kiện từ component con lên component cha.-->
         </app-chat-list>
 
       </div>

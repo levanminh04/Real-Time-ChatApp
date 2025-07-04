@@ -36,6 +36,8 @@ export class KeycloakService {
     async init(){
       const authenticated = await this.keycloak.init({    // this.keycloak ở đây là getter trả về đối tượng Đối tượng Keycloak, đối tượng này cung cấp các hàm như init(), login(), logout(), accountManagement(), hasRealmRole()...
         onLoad: 'login-required',
+        checkLoginIframe: false, // Disable iframe checking to prevent timeout errors
+        silentCheckSsoFallback: false // Disable fallback for checking SSO
       })
       if (authenticated) {
         console.log("Người dùng đã đăng nhập!");

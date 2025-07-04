@@ -18,7 +18,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 		scheme = "bearer",
 		in = SecuritySchemeIn.HEADER,
 		flows = @OAuthFlows(
-				password = @OAuthFlow(
+				authorizationCode = @OAuthFlow(
 						authorizationUrl = "http://localhost:9090/realms/Real-time-chat-app/protocol/openid-connect/auth",
 						tokenUrl = "http://localhost:9090/realms/Real-time-chat-app/protocol/openid-connect/token"
 				)
